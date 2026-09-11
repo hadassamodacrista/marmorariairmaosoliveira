@@ -44,6 +44,10 @@ yarn-error.log*
 
 # documento com senhas/acessos — nunca commitar
 /ACESSOS-E-SENHAS.md
+/ACESSOS-E-SENHAS.pdf
+
+# script auxiliar de conversão (uso pontual, não faz parte do app)
+/.scratch
 
 # typescript
 *.tsbuildinfo
