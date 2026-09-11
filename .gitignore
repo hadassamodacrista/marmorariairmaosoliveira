@@ -42,6 +42,9 @@ yarn-error.log*
 # dados reais exportados para migração — nunca commitar
 /scripts/dados-exportados.json
 
+# documento com senhas/acessos — nunca commitar
+/ACESSOS-E-SENHAS.md
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
