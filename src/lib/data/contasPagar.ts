@@ -2,7 +2,7 @@ import "server-only";
 import { db, contasPagar, fornecedores } from "@/db/client";
 import { eq } from "drizzle-orm";
 import { newId } from "@/lib/ids";
-import { arredonda2, num } from "@/lib/calc";
+import { arredonda2, num, parseValorBR } from "@/lib/calc";
 import { paraISODate, hojeISO } from "@/lib/format";
 
 export const CATEGORIAS_PAGAR = ["chapa", "insumo", "servico_terceiro", "despesa_fixa", "imposto", "frete", "outro"] as const;
@@ -53,7 +53,7 @@ export async function getContasPagar(filtro?: { status?: string; categoria?: str
 export async function saveContaPagar(data: ContaPagarInput) {
   const descricao = String(data.descricao || "").trim();
   if (!descricao) throw new Error("Informe a descrição da conta");
-  const valor = num(data.valor);
+  const valor = parseValorBR(data.valor);
   if (!(valor > 0)) throw new Error("Informe um valor válido");
 
   const emitidoEm = paraISODate(data.emitidoEm) || hojeISO();

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { moeda, dataBR } from "@/lib/format";
-import { num, arredonda2 } from "@/lib/calc";
+import { num, arredonda2, parseValorBR } from "@/lib/calc";
 import { toast } from "@/lib/ui-client";
 import { salvarFinanceiroAction } from "./actions";
 import { FORMAS_PAGAMENTO, rotuloFormaPagamento } from "@/lib/constants";
@@ -174,7 +174,7 @@ function ControleFinanceiro({ orcamento, onSelecionar }: { orcamento: OrcFinance
     let pago = 0;
     const linhasComPendente = linhas.map((l, indice) => {
       const previsto = valorPrevistoParcela(total, qtd, indice);
-      const valor = num(l.valor);
+      const valor = parseValorBR(l.valor);
       const pendente = l.status === "paga" ? Math.max(previsto - valor, 0) : previsto;
       if (l.status === "paga") pago += valor;
       return { previsto, pendente };
@@ -191,7 +191,7 @@ function ControleFinanceiro({ orcamento, onSelecionar }: { orcamento: OrcFinance
       const detalhe = linhas.map((l, indice) => ({
         numero: indice + 1,
         dataPagamento: l.dataPagamento,
-        valor: l.valor || "0",
+        valor: String(parseValorBR(l.valor)),
         formaPagamento: l.forma || forma,
         status: l.status,
       }));

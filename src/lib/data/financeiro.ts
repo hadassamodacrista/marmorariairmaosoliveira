@@ -2,7 +2,7 @@ import "server-only";
 import { db, orcamentos, parcelasOrcamento } from "@/db/client";
 import { eq, inArray } from "drizzle-orm";
 import { newId } from "@/lib/ids";
-import { num } from "@/lib/calc";
+import { num, parseValorBR } from "@/lib/calc";
 
 export async function getOrcamentosFinanceiro() {
   const todos = await db.select().from(orcamentos);
@@ -63,7 +63,7 @@ export async function saveFinanceiro(data: SalvarFinanceiroInput) {
   }
 
   const somaDetalhe = detalhe.reduce(
-    (soma, item) => (String(item.status || "").toLowerCase() === "paga" ? soma + num(item.valor) : soma),
+    (soma, item) => (String(item.status || "").toLowerCase() === "paga" ? soma + parseValorBR(item.valor) : soma),
     0
   );
   const valorPago = detalhe.length ? Math.round(somaDetalhe * 100) / 100 : 0;
@@ -98,7 +98,7 @@ export async function saveFinanceiro(data: SalvarFinanceiroInput) {
         orcamentoId: data.id,
         numero: item.numero,
         dataPagamento: item.dataPagamento || "",
-        valor: String(num(item.valor)),
+        valor: String(parseValorBR(item.valor)),
         formaPagamento: item.formaPagamento || data.formaPagamento || "",
         status: String(item.status || "pendente").toLowerCase() === "paga" ? "paga" : "pendente",
       });

@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { moeda, dataBR, paraISODate, hojeISO } from "@/lib/format";
-import { num } from "@/lib/calc";
+import { num, parseValorBR } from "@/lib/calc";
 import { confirmar } from "@/lib/ui-client";
 import { tratarResultado } from "@/lib/use-action-result";
 import { CATEGORIAS_PAGAR_UI, rotuloCategoriaPagar, FORMAS_PAGAMENTO } from "@/lib/constants";
@@ -46,7 +46,7 @@ export default function ContasPagarClient({ initial, fornecedores }: { initial: 
     const dados = {
       id: editandoObj?.id || null,
       descricao: String(formData.get("descricao") || ""),
-      valor: String(formData.get("valor") || "0").replace(",", "."),
+      valor: String(parseValorBR(formData.get("valor"))),
       categoria: String(formData.get("categoria") || "outro"),
       fornecedorId: String(formData.get("fornecedorId") || ""),
       fornecedorNome: String(formData.get("fornecedorNome") || ""),
