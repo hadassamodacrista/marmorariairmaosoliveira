@@ -4,20 +4,41 @@ import bcrypt from "bcryptjs";
 import { SESSION_COOKIE, criarToken, verificarToken } from "./jwt";
 
 /**
- * Login de administrador único (definido por variáveis de ambiente).
- * Sem cadastro de usuário, sem banco: é assim mesmo para "só eu" —
- * ver DEPLOY.md para trocar depois por múltiplos usuários se precisar.
+ * Login por variáveis de ambiente — sem tabela de usuários, sem banco.
+ * Suporta até dois logins fixos por implantação:
+ *   - ADMIN_EMAIL / ADMIN_PASSWORD_HASH (ou ADMIN_PASSWORD)   -> o cliente, dia a dia
+ *   - SUPPORT_EMAIL / SUPPORT_PASSWORD_HASH (ou SUPPORT_PASSWORD) -> você, suporte
+ * O login de suporte é opcional: só é considerado se SUPPORT_EMAIL estiver
+ * definido. Os dois têm o mesmo nível de acesso (não há papéis/permissões
+ * nesta versão) — a vantagem é você não precisar saber a senha do cliente
+ * para entrar e ajudar.
  */
+type ParDeCredenciais = { email: string; hash?: string; plano?: string };
+
+function paresConfigurados(): ParDeCredenciais[] {
+  const pares: ParDeCredenciais[] = [];
+
+  const emailAdmin = String(process.env.ADMIN_EMAIL || "").trim();
+  if (emailAdmin) {
+    pares.push({ email: emailAdmin, hash: process.env.ADMIN_PASSWORD_HASH, plano: process.env.ADMIN_PASSWORD });
+  }
+
+  const emailSuporte = String(process.env.SUPPORT_EMAIL || "").trim();
+  if (emailSuporte) {
+    pares.push({ email: emailSuporte, hash: process.env.SUPPORT_PASSWORD_HASH, plano: process.env.SUPPORT_PASSWORD });
+  }
+
+  return pares;
+}
+
 export async function verificarCredenciais(email: string, senha: string): Promise<boolean> {
-  const emailConfig = String(process.env.ADMIN_EMAIL || "").trim().toLowerCase();
-  const emailOk = emailConfig.length > 0 && String(email || "").trim().toLowerCase() === emailConfig;
-  if (!emailOk) return false;
+  const emailInformado = String(email || "").trim().toLowerCase();
 
-  const hash = process.env.ADMIN_PASSWORD_HASH;
-  if (hash) return bcrypt.compare(senha, hash);
-
-  const plano = process.env.ADMIN_PASSWORD;
-  if (plano) return senha === plano;
+  for (const par of paresConfigurados()) {
+    if (par.email.toLowerCase() !== emailInformado) continue;
+    if (par.hash) return bcrypt.compare(senha, par.hash);
+    if (par.plano) return senha === par.plano;
+  }
 
   return false;
 }

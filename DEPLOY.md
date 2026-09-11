@@ -66,6 +66,14 @@ DATABASE_URL="cole-a-connection-string-aqui" npm run db:seed
 | `ADMIN_PASSWORD_HASH` | veja como gerar logo abaixo |
 | `NEXT_PUBLIC_BASE_URL` | a URL que a Vercel vai te dar, ex. `https://marmoraria-web.vercel.app` (dá pra editar depois de criar) |
 
+Opcional — um segundo login, só pra quem dá suporte (não precisa saber a
+senha do cliente pra entrar e ajudar):
+
+| Nome | Valor |
+|---|---|
+| `SUPPORT_EMAIL` | seu e-mail de suporte |
+| `SUPPORT_PASSWORD_HASH` | gere do mesmo jeito que o `ADMIN_PASSWORD_HASH`, com uma senha diferente |
+
 4. Clique **Deploy**.
 
 ### Gerando o `ADMIN_PASSWORD_HASH`
