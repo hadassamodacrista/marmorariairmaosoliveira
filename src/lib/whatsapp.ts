@@ -15,7 +15,7 @@ export function linkWhatsappOrcamento(opts: {
 }): string {
   const primeiroNome = String(opts.clienteNome || "").trim().split(/\s+/)[0] || "";
   const msg =
-    `Olá ${primeiroNome}! 👋\n\n` +
+    `Olá ${primeiroNome}!\n\n` +
     `Segue o seu orçamento #${String(opts.numero).padStart(4, "0")} no valor de ${opts.totalFormatado}.\n\n` +
     `Acesse pelo link abaixo para visualizar, aprovar e baixar o PDF:\n${opts.urlPublica}\n\n` +
     `Qualquer dúvida, estou à disposição!`;

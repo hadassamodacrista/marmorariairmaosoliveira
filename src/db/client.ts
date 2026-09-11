@@ -34,6 +34,20 @@ function criarConexao(): AppDatabase {
     const sql = neon(process.env.DATABASE_URL);
     return drizzle(sql, { schema });
   }
+
+  // Sem DATABASE_URL: em dev local isso é intencional (banco PGlite).
+  // Na Vercel (ou qualquer ambiente serverless) o sistema de arquivos é
+  // somente leitura, então tentar criar o PGlite aqui só ia falhar com um
+  // erro confuso — falha com uma mensagem clara em vez disso.
+  if (process.env.VERCEL) {
+    throw new Error(
+      "DATABASE_URL não está configurada nesta implantação da Vercel. " +
+        "Verifique em Project Settings → Environment Variables se DATABASE_URL " +
+        "está marcada para o ambiente Production (e Preview, se usar), e faça um " +
+        "novo Redeploy depois de salvar."
+    );
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const path = require("path");
   // eslint-disable-next-line @typescript-eslint/no-require-imports
